@@ -5,7 +5,7 @@
     'description':"Dynamic UID in Form",
     'version': '1.0',
     'category': 'Extra Tools',
-    'author': 'Codeware',
+    'author': 'manuthalasseril',
     "depends": [
         "base"
     ],
