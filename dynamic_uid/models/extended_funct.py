@@ -3,8 +3,8 @@
 import json
 from lxml import etree
 
-from openerp.exceptions import except_orm
-from openerp.models import (
+from odoo.exceptions import except_orm
+from odoo.models import (
     MetaModel,
     BaseModel,
     Model, TransientModel, AbstractModel,
@@ -12,10 +12,12 @@ from openerp.models import (
     MAGIC_COLUMNS,
     LOG_ACCESS_COLUMNS,
 )
-from openerp.tools.safe_eval import safe_eval
+
+from odoo.tools.safe_eval import safe_eval
 
 # extra definitions for backward compatibility
 browse_record_list = BaseModel
+                
 
 # Don't deal with groups, it is done by check_group().
 # Need the context to evaluate the invisible attribute on tree views.
@@ -28,7 +30,7 @@ def transfer_node_to_modifiers(node, modifiers, context=None, in_tree_view=False
             attrs = node.get('attrs')
             attrs = attrs.replace(', uid', user_id)
             node.set('attrs', attrs)
-        modifiers.update(eval(node.get('attrs')))
+        modifiers.update(safe_eval(node.get('attrs')))
 
     if node.get('states'):
         if 'invisible' in modifiers and isinstance(modifiers['invisible'], list):
@@ -39,7 +41,7 @@ def transfer_node_to_modifiers(node, modifiers, context=None, in_tree_view=False
 
     for a in ('invisible', 'readonly', 'required'):
         if node.get(a):
-            v = bool(eval(node.get(a), {'context': context or {}}))
+            v = bool(safe_eval(node.get(a), {'context': context or {}}))
             if in_tree_view and a == 'invisible':
                 # Invisible in a tree view has a specific meaning, make it a
                 # new key in the modifiers attribute.
